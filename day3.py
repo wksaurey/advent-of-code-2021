@@ -1,29 +1,44 @@
 import util
 
-diag_report = util.read_stripped_lines('input/day3.txt')
+def main():
+    diag_report = util.read_stripped_lines('input/day3.txt')
 
-gamma_rate = '' # common values
-epsilon_rate = '' # least common values
+    life_support_rating = ''
+    ox_gen_rating = find_life_support(diag_report, 1)
+    co2_scrub_rating = find_life_support(diag_report, 0)
+    print(f'ox: {ox_gen_rating}')
+    print(f'co2: {co2_scrub_rating}')
 
-for bit_index in range(len(diag_report[0])):
-    bitCounts = [0, 0]
+    ox_gen_rating = int(ox_gen_rating, 2)
+    co2_scrub_rating = int(co2_scrub_rating, 2)
+    print(f'ox: {ox_gen_rating}')
+    print(f'co2: {co2_scrub_rating}')
 
-    for num in diag_report:
-        bitCounts[int(num[bit_index])] += 1
+    print(f'lsr: {ox_gen_rating*co2_scrub_rating}')
 
-    if bitCounts[0] > bitCounts[1]:
-        gamma_rate += '0'
-        epsilon_rate += '1'
+def find_life_support(lsr_values, rating_type, bit_index=0):
+    new_lsr_values = []
+
+    bit_counts = [0, 0]
+
+    for num in lsr_values:
+        bit_counts[int(num[bit_index])] += 1
+
+    if bit_counts[0] == bit_counts[1]:
+        bit_counts[1] += 1
+
+    if rating_type == 0:
+        #co2
+        bit_criteria = bit_counts.index(min(bit_counts))
     else:
-        gamma_rate += '1'
-        epsilon_rate += '0'
+        # oxgen
+        bit_criteria = bit_counts.index(max(bit_counts))
+    for num in lsr_values:
+        if int(num[bit_index]) == bit_criteria:
+            new_lsr_values.append(num)
 
-print(f'gamma: {gamma_rate}')
-print(f'epsilon: {epsilon_rate}')
+    if len(new_lsr_values) == 1:
+        return new_lsr_values[0]
+    return find_life_support(new_lsr_values, rating_type, bit_index+1)
 
-gamma_rate = int(gamma_rate, 2)
-epsilon_rate = int(epsilon_rate, 2)
-
-print(f'gamma: {gamma_rate}')
-print(f'epsilon: {epsilon_rate}')
-print(f'power_consumption: {gamma_rate*epsilon_rate}')
+main()
