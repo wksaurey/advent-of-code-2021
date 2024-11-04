@@ -4,8 +4,11 @@ def main():
     for board in boards:
         bingo_boards.append(Bingo_board(board))
 
+    boards_won = 0
     for num in nums:
         for board_index, bingo_board in enumerate(bingo_boards):
+            if bingo_board.won == True:
+                continue
             if num in bingo_board.nums:
                 result = bingo_board.nums[num]
                 bingo_board.row_counts[result['row_index']] += 1
@@ -14,13 +17,21 @@ def main():
 
             # check if win
             if bingo_board.size in bingo_board.row_counts or bingo_board.size in bingo_board.col_counts:
-                print(f'Board {board_index} wins!')
-                score = 0
-                for board_num in bingo_board.nums:
-                    if bingo_board.nums[board_num]['marked'] == False:
-                        score += int(board_num)
-                print(f'Score: {score * int(num)}')
-                return               
+                bingo_board.won = True
+                boards_won += 1
+                if len(bingo_boards) == boards_won:
+                    bingo_board.last_won = True
+            
+        if len(bingo_boards) == boards_won:
+            for board_index, bingo_board in enumerate(bingo_boards):
+                if bingo_board.last_won == True:
+                    print(f'Board {board_index} is the last board!')
+                    score = 0
+                    for board_num in bingo_board.nums:
+                        if bingo_board.nums[board_num]['marked'] == False:
+                            score += int(board_num)
+                    print(f'Score: {score * int(num)}')
+                    return               
 
 def get_data():
     with open('input/day4.txt') as file:
@@ -47,6 +58,8 @@ class Bingo_board:
         self.row_counts = [0] * len(board)
         self.col_counts = [0] * len(board)
         self.size = len(board)
+        self.won = False
+        self.last_won = False
         self.set_nums(board)
 
     def set_nums(self, board):
