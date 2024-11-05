@@ -9,18 +9,15 @@ def main():
     vent_data = list(map(lambda line : line.replace('->', '').split(), vent_data))
     vent_data = list(map(lambda line : Line(line), vent_data))
     # print_data(vent_data)
-    working_vent_data = []
     for vent in vent_data:
         if (vent.start[X] == vent.end[X]):
             vent.direction = 'col'
-            working_vent_data.append(vent)
-            vent.print_data()
         elif(vent.start[Y] == vent.end[Y]):
             vent.direction = 'row'
-            working_vent_data.append(vent)
-            vent.print_data()
+        else:
+            vent.direction = 'diag'
 
-    vent_map = map_data(working_vent_data)
+    vent_map = map_data(vent_data)
     print_map(vent_map)
     count_overlap(vent_map)
 
@@ -57,6 +54,26 @@ def map_data(vent_data):
             while col_index <= max(vent.start[X], vent.end[X]):
                 vent_map[row_index][col_index] += 1
                 col_index += 1
+        elif vent.direction == 'diag':
+            row_index = vent.start[Y]
+            col_index = vent.start[X]
+            if vent.start[Y] < vent.end[Y]:
+                row_delta = 1
+            else:
+                row_delta = -1
+            if vent.start[X] < vent.end[X]:
+                col_delta = 1
+            else:
+                col_delta = -1
+            while row_index != vent.end[Y]:
+                vent_map[row_index][col_index] += 1
+                col_index += col_delta
+                row_index += row_delta
+            vent_map[row_index][col_index] += 1
+                
+
+
+
         else:
             print('An error has occured')
             sys.exit(1)
