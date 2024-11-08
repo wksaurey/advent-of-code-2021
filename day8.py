@@ -1,7 +1,7 @@
 import util
 import sys
 
-file_path = 'input/day8_test.txt'
+file_path = 'input/day8.txt'
 value_signal_lengths = [6, 2, 5, 5, 4, 5, 6, 3, 7, 6]
 
 def main():
@@ -34,7 +34,7 @@ def main():
                 if len(not_included) == 2:
                     values = [0, 1, 2]
                     for value in values:
-                        if value != index_0 or value != index_1:
+                        if value != index_0 and value != index_1:
                             solutions[3] = number_lengths[5][value]
                             if len(difference(number_lengths[5][index_0], solutions[4])) == 3:
                                 solutions[2] = number_lengths[5][index_0]
